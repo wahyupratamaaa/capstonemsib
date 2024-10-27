@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request
 from flask_cors import CORS
 import requests
+from dotenv import load_dotenv
 
+
+load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
@@ -18,6 +21,6 @@ def job():
 
 if __name__ == "__main__":
     try:
-        app.run('0.0.0.0', port=3000, debug=True)
+        app.run('0.0.0.0', port=3080, debug=True)
     except Exception as e:
         print("Terjadi kesalahan saat menjalankan aplikasi:", e)
