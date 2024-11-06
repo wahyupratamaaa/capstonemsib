@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="../static/bukuku.png" type="image/png">
+
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -15,12 +17,13 @@
       href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
     />
     <head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>Page Awal</title>
+    <title>Dashboard</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM9cl07n8Z7w/RSYsl3d5C6T7Z5aXhb4Z9Or8au" crossorigin="anonymous">
 
@@ -59,6 +62,10 @@
           color: black;
           border-color: black;
         }
+        body {
+        margin: 0;             /* Menghapus margin dari body */
+        padding: 0;            /* Menghapus padding dari body */
+    }
         /* .container {
           margin: 0;
           padding: 0;
@@ -211,7 +218,6 @@
         border-top-right-radius: 8px;
         padding: auto 5px;
         display: flex;
-        /* flex-direction: row; */
         justify-content: center;
         align-items: center;
       }
@@ -247,20 +253,19 @@
         border-radius: 50%;
         width: 50px;
         height: 50px;
+        border: none;
+        outline: none;
+
       }
 
-      /* hii */
-      /* Container untuk dropdown */
-       /* Container untuk dropdown */
         .dropdown {
             position: relative;
             display: inline-block;
             
         }
 
-        /* Konten dropdown yang tersembunyi secara default */
         .dropdown-content {
-            display: none; /* Tersembunyi secara default */
+            display: none;
             position: absolute;
             background-color: #f9f9f9;
             width: auto;
@@ -275,7 +280,6 @@
             transition: opacity 0.3s ease, visibility 0.3s ease; /* Transisi untuk smooth effect */
         }
 
-        /* Menampilkan dropdown saat hover pada container */
         .dropdown:hover .dropdown-content {
             display: block; /* Menampilkan dropdown saat hover */
             opacity: 1; /* Membuatnya terlihat */
@@ -288,12 +292,14 @@
             padding: 12px 16px;
             text-decoration: none;
             display: block;
+            align-items: center;
         }
 
         /* Hover effect untuk item dropdown */
         .dropdown-content a:hover {
             background-color: #f1f1f1;
-            border-radius: 15px;
+            border-radius: 7px;
+        
         }
         .dropdown-content p {
           font-size: 12px;
@@ -302,9 +308,33 @@
           text-align: center;
           margin: 10px 0;
         }
-
-
-
+       .container-content {
+        background: #5D76E1;      
+        width: 100%;          
+        height: 50vh;         
+        left: 0;           
+        top: 0;              
+        z-index: -1;           
+    }
+      .content-child {
+        margin: 3rem;
+        /* background-color: black; */
+        padding: 2rem;
+      }
+      .content-child h1 {
+        color: white;
+        font-weight: 600;
+      }
+      .content-child img {
+        width: 20%;
+        height: auto;
+        object-fit: contain;
+        margin: 5rem;
+      }
+      .text-logout {
+        color: red;
+      }
+     
         
     </style>
     <script>
@@ -321,24 +351,25 @@
      document.addEventListener("DOMContentLoaded", function () {
         const loginStatus = localStorage.getItem('loginStatus');
         const username = localStorage.getItem('username');
+        const password = localStorage.getItem('password');
 
-        console.log(loginStatus, username); 
+        console.log("datamasuk", loginStatus, password, username); 
 
         // Jika login berhasil
         if (loginStatus === 'success') {
             Swal.fire({
                 icon: 'success',
                 title: 'Login Berhasil',
-                text: 'Selamat Datang di Dashboard!',
-                timer: 1000, // Menutup otomatis setelah 1 detik
+                 text: 'Selamat Datang   ' + username,
+                timer: 2000,
                 showConfirmButton: false
             });
 
             // Tampilkan username di dropdown
             document.getElementById('welcomeMessage').innerText = `Hai, selamat datang ${username}`;
-            localStorage.removeItem('loginStatus'); // Hapus status login agar tidak muncul lagi
+            localStorage.removeItem('loginStatus');
         } else {
-            // Jika tidak ada status login, ambil username dari localStorage
+
             if (username) {
                 document.getElementById('welcomeMessage').innerText = `Hai, selamat datang ${username}`;
             } else {
@@ -354,6 +385,8 @@
                 icon: 'success',
                 title: 'Logout Berhasil',
                 text: 'Logout Berhasil',
+                timer: 2000, // Menutup otomatis setelah 1 detik
+                showConfirmButton: false
 
             })
         });
@@ -368,11 +401,11 @@ function menuToggle() {
                 dropdownContent.style.display = 'none'; // Mengatur display setelah transisi
             }, 300); // Waktu transisi yang sama dengan CSS
         } else {
-            dropdownContent.style.display = 'block'; // Menampilkan dropdown
+            dropdownContent.style.display = 'block'; 
             setTimeout(() => {
-                dropdownContent.style.opacity = '1'; // Membuatnya terlihat
-                dropdownContent.style.visibility = 'visible'; // Menjadikannya terlihat
-            }, 10); // Waktu kecil agar efek transisi terjadi
+                dropdownContent.style.opacity = '1'; 
+                dropdownContent.style.visibility = 'visible';
+            }, 10); 
         }
     }
 
@@ -386,15 +419,29 @@ function menuToggle() {
                     openDropdown.style.visibility = 'hidden';
                     setTimeout(() => {
                         openDropdown.style.display = 'none';
-                    }, 300); // Waktu transisi yang sama
+                    }, 300); 
                 }
             }
         }
     }
 
+          function logoutAlert(username) {
+          Swal.fire({
+              icon: 'success',
+              title: 'Logout Berhasil',
+              text: 'Selamat Datang ' + username,
+              timer: 3000, 
+              timerProgressBar: true,
+          });
+      }
 
+      function handleLogout() {
+          let username = localStorage.getItem('username'); 
 
-     
+          logoutAlert(username);
+          window.location.href = "/";
+      }
+    
     </script>
   </head>
   <body>
@@ -410,20 +457,20 @@ function menuToggle() {
 
          <div class="dropdown">
         <button class="btn-user" onclick="menuToggle()">
-            <i class="fa fa-user" aria-hidden="true"></i>
+            <i class="fa-solid fa-person-skiing" aria-hidden="true"></i>
         </button>
-        <div class="dropdown-content">
+        <div class="dropdown-content" style="font-size: small;">
           <p id="welcomeMessage"></p>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/" id="logout">Logout</a>
+            <a href="/" id="logout" onclick="logoutAlert">Logout</a>
+            <a href="/dashboardProduk" >Dashboard</a>
+            <a href="/tentang">Developer</a>
         </div>
     </div>
-
         </div>
+
        <div class="mb-4" style="position: relative;">
        <img src="../static/diskon.webp" alt="diskon" style="height: 80px; width: 100%;"> 
         <p style="position: absolute; top: 50%; left: 30%; transform: translate(-50%, -50%); color: #fff; font-size: 24px; font-weight: bold; z-index: 1 text-muted;">Promo Terbatas! Buku Terbaik dengan Harga Terhemat hingga 70%!</p>
-        
       </div>
         <div class="container ">
           <div class="d-flex align-items-start gap-3">
@@ -438,13 +485,8 @@ function menuToggle() {
             </img>
             </div>
           </div>
-        
-          <!-- section -->
-           
-
-
   <h3 class="text-muted " style="margin-bottom: -2rem;margin-top: 3rem;" id="produk">Item Book</h3>
-  <div class="card-container">
+  <div class="card-container" onclick="window.location.href='/produk'">
     <div class="card">
         <div class="card-body">
             <div class="card-item">
@@ -591,29 +633,16 @@ function menuToggle() {
     </div>
 </div>
 
-<!-- <div class="container-tentang" id="tentang">
-            <div class="d-flex flex-row align-items-center">
-              <img src="../static/kid-hero.webp" alt="">
-              <div class="text">
-                <h1>Tentang BukukU</h1>
-                <span>platform yang dirancang untuk membantu anak-anak mulai mencintai membaca 
-                  di tengah dunia gadget yang semakin mendominasi. Dengan berbagai buku digital 
-                  yang menarik dan mudah diakses, anak-anak dapat menemukan cerita yang mereka 
-                  sukai dengan cara yang menyenangkan.</span>
-              </div>
-            </div>
-           </div> -->
-
-        <!-- card -->
-           <div class="icon">
-            <div class="d-flex flex-row align-items-center ">
-              <img src="../static/bukuku.png" alt="logo" style="width: 10%; height: auto;"></img>
-                <h5 class="text-muted" style="margin-left: auto;">Toko buku online terlengkap dan terpercaya di Indonesia</>
-            </div>
-           </div>
-           </footer> 
-        </div>
+      </div>
+                 <div class="container-content" style="margin-top: 5rem;">
+                <div class="content-child d-flex flex-row align-items-center justify-content-center">
+                  <h1>
+                    Temukan buku-buku pilihan terbaik yang siap menambah wawasan dan menemani harimu bersama BukukU</h1>
+                  <img src="../static/tag-dashboard.png" alt="" style="width: 20%; height: auto;" >
+                </div> 
+               </div>
        </div>
+    
 <div class="container-footer">
   <footer class="py-5 px-10">
     <div class="row px-5">
@@ -669,5 +698,6 @@ function menuToggle() {
     </div>
   </footer>
 </div>
+ 
   </body>
 </html>

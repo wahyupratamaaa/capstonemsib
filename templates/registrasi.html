@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="../static/bukuku.png" type="image/png">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -9,6 +11,8 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Registasi</title>
     <style>
       * {
@@ -130,37 +134,81 @@
         font-size: small;
       }
     </style>
+    <script>
+      function Daftar() {
+    let username = $('#username').val();
+    let password = $('#password').val();
+    let confirmmpassword = $('#confirmmpassword').val();
+    let isChecked = $('#cekbox').is(':checked');
+
+    if (username && password && confirmmpassword && isChecked) {
+      let formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("confirmmpassword", confirmmpassword);
+
+      $.ajax({
+        type: "POST",
+        url: "/registrasi",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          // Menampilkan pesan sukses dengan timer
+          Swal.fire({
+            title: "Berhasil!",
+            text: response.message || "Akun Anda telah berhasil dibuat!",
+            icon: "success",
+            timer: 3000, 
+            timerProgressBar: true,
+            willClose: () => {
+              window.location.reload();
+            }
+          });
+        },
+        error: function(xhr, status, error) {
+          let errorMessage = xhr.responseJSON.error || "Terjadi kesalahan saat menyimpan data!";
+          Swal.fire("Error", errorMessage, "error");
+        },
+      });
+    } else {
+      Swal.fire("Error", "Lengkapi semua data dan centang persetujuan kebijakan privasi!", "error");
+    }
+  }
+    </script>
   </head>
   <body>
     <div class="container">
       <div class="box-login">
         <div class="wrap">
-          <img src="../static/boook.png" alt="icon" class="icon" />
+          <img src="../static/header-banner.png" style="filter: hue-rotate(180deg);" alt="icon" class="icon" />
           <div class="form-group">
             <h1>Daftar Akun BukuKu</h1>
-            <input type="text" placeholder="Username" class="form-control" />
+            <input type="text" placeholder="Username" class="form-control" id="username"/>
             <input
               type="password"
               placeholder="Password"
               class="form-control"
+              id="password"
             />
             <input
               type="password"
               placeholder="Konfirmasi Password"
               class="form-control"
+              id="confirmmpassword"
             />
             <div class="form-check">
               <input
                 class="form-check-input"
                 type="checkbox"
                 value=""
-                id="flexCheckIndeterminate"
+                id="cekbox"
               />
-              <label class="form-check-label" for="flexCheckIndeterminate">
+              <label class="form-check-label" for="cekbox">
                 Dengan mendaftar, kamu menyetujui Kebijakan Privasi BukuKu.com
               </label>
             </div>
-            <button class="btn btn-primary btn-lg">Daftar</button>
+            <button class="btn btn-primary btn-lg" onclick="Daftar()">Daftar</button>
             <h5 class="daftar">Sudah punya akun ? <a href="/login">&nbsp;&nbsp;Masuk Sekarang</h5>
           </div>
         </div>
