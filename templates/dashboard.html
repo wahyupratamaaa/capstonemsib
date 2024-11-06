@@ -2,7 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="../static/bukuku.png" type="image/png">
+    <link rel="icon" href="../static/EduBooks.png" type="image/png">
+
 
     <meta
       name="viewport"
@@ -63,19 +64,10 @@
           border-color: black;
         }
         body {
-        margin: 0;             /* Menghapus margin dari body */
-        padding: 0;            /* Menghapus padding dari body */
+        margin: 0;             
+        padding: 0;           
     }
-        /* .container {
-          margin: 0;
-          padding: 0;
-
-        } */
-
-        /* .container-navbar p {
-          color: red
-        } */
-
+    
         .box {
           width: 50%;
           margin: 0 ;
@@ -425,22 +417,24 @@ function menuToggle() {
         }
     }
 
-          function logoutAlert(username) {
-          Swal.fire({
-              icon: 'success',
-              title: 'Logout Berhasil',
-              text: 'Selamat Datang ' + username,
-              timer: 3000, 
-              timerProgressBar: true,
-          });
-      }
+    function logoutAlert() {
+    return Swal.fire({
+        icon: 'success',
+        title: 'Logout Berhasil',
+        text: 'Selamat Datang',
+        timer: 3000, 
+        timerProgressBar: true,
+        willClose: () => {
+            window.location.href = "/";
+        }
+    });
+}
 
-      function handleLogout() {
-          let username = localStorage.getItem('username'); 
+function handleLogout() {
+    logoutAlert();
+}
 
-          logoutAlert(username);
-          window.location.href = "/";
-      }
+
     
     </script>
   </head>
@@ -452,7 +446,7 @@ function menuToggle() {
 
           </div>
           <div class="d-flex justify-content-center" style="margin-left: -100px;">
-          <img src="../static/bukuku.png" alt="icon" style="height: auto;width: 80px;">
+          <img src="../static/EduBooks.png" alt="icon" style="height: auto;width: 80px;">
           </div>
 
          <div class="dropdown">
@@ -461,9 +455,9 @@ function menuToggle() {
         </button>
         <div class="dropdown-content" style="font-size: small;">
           <p id="welcomeMessage"></p>
+          <a href="/dashboardProduk" >Dashboard</a>
+          <a href="/tentang">Developer</a>
             <a href="/" id="logout" onclick="logoutAlert">Logout</a>
-            <a href="/dashboardProduk" >Dashboard</a>
-            <a href="/tentang">Developer</a>
         </div>
     </div>
         </div>
@@ -476,12 +470,12 @@ function menuToggle() {
           <div class="d-flex align-items-start gap-3">
            <div class="box">
             <div class="slide-inner">
-           <img src="../static/asset/blue.png" alt="Gambar Buku">
+           <img src="../static/card/list4.png" alt="Gambar Buku">
            </div>
            </div>
             <div class="d-flex flex-column align-items-end gap-3">
-              <img class="child-box" src="../static/asset/black.png">
-              <img class="child-box" src="../static/asset/pink.png"></img>
+              <img class="child-box" src="../static/card/list5.png">
+              <img class="child-box" src="../static/card/list1.png"></img>
             </img>
             </div>
           </div>
@@ -637,7 +631,7 @@ function menuToggle() {
                  <div class="container-content" style="margin-top: 5rem;">
                 <div class="content-child d-flex flex-row align-items-center justify-content-center">
                   <h1>
-                    Temukan buku-buku pilihan terbaik yang siap menambah wawasan dan menemani harimu bersama BukukU</h1>
+                    Temukan buku-buku pilihan terbaik yang siap menambah wawasan dan menemani harimu bersama EduBooks</h1>
                   <img src="../static/tag-dashboard.png" alt="" style="width: 20%; height: auto;" >
                 </div> 
                </div>
@@ -647,9 +641,9 @@ function menuToggle() {
   <footer class="py-5 px-10">
     <div class="row px-5">
       <div class="col-6 col-md-2 mb-3">
-        <h6 class="tagline">Produk BukuKu</h6>
+        <h6 class="tagline">Produk EduBooks</h6>
         <ul class="nav flex-column">
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary ">BukuKu Afiliasi</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary ">EduBooks Afiliasi</a></li>
           <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary ">Mitra Afiliasi</a></li>
         </ul>
       </div>
@@ -664,7 +658,7 @@ function menuToggle() {
       </div>
 
       <div class="col-6 col-md-2 mb-3">
-        <h6 class="tagline">Tentang BukuKu</h6>
+        <h6 class="tagline">Tentang EduBooks</h6>
         <ul class="nav flex-column">
           <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Tentang Kami</a></li>
           <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Toko Kami</a></li>
@@ -677,7 +671,7 @@ function menuToggle() {
       <div class="col-md-5 offset-md-1 mb-3">
         <form>
           <h6 style="margin-left: auto;">Aplikasi Seluler Kami</h6>
-          <p class="text-sm" style="font-size: 14px;">Download aplikasi BukuKu yang tersedia di seluruh perangkat iOS dan Android</p>
+          <p class="text-sm" style="font-size: 14px;">Download aplikasi EduBooks yang tersedia di seluruh perangkat iOS dan Android</p>
           <div class="d-flex flex-column flex-sm-row w-100 gap-2">
            <div class="d-flex flex-row gap-2" style="width: 30%; height: auto;">
             <img src="../static/apple-app-store.webp" alt="app" width="50%" height="auto">

@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="../static/bukuku.png" type="image/png">
+    <link rel="icon" href="../static/EduBooks.png" type="image/png">
+
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +28,7 @@
         }
         .container {
             width: 100%;
-            height: 30vh;
+            height: 35vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -107,10 +108,11 @@
 
         .profile-details p {
             font-size: 1rem;
-            color: #666;
+            color: gray;
             max-width: 20rem;
             word-wrap: break-word;
             margin-bottom: 0.5rem;
+
         }
 
         .icon-profile {
@@ -123,32 +125,83 @@
         .title {
             color: gray;
             margin: 5px 0;
+
         }
+        /* .title p{
+            color: red;
+        } */
 
         .garis-vertikal {
             height: 20rem;
-            width: 1px;
+            width: 2px;
             border-left: 4px solid gray;
             margin-left: 50px;
+            display: flex;
+            flex-direction: row;
         }
+
+
         .profile-details span {
         font-size: 13px; 
         color: gray;
         }
 
+
     </style>
+     <script>
+        let isScrolling = false;
+        let scrollDirection = 'down';
+        let scrollInterval;
+
+        function autoScroll() {
+            if (!isScrolling) {
+                if (scrollDirection === 'down') {
+                    window.scrollBy(0, 100);
+                    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
+                        scrollDirection = 'up';
+                    }
+                } else if (scrollDirection === 'up') {
+                    window.scrollBy(0, -100);
+                    if (window.scrollY <= 0) {
+                        scrollDirection = 'down';
+                    }
+                }
+            }
+        }
+
+        function startAutoScroll() {
+            scrollInterval = setInterval(autoScroll, 30);
+        }
+
+        window.addEventListener('wheel', function(event) {
+            isScrolling = true;
+            clearInterval(scrollInterval);
+            setTimeout(function() {
+                isScrolling = false;
+                startAutoScroll();
+            }, 2000);
+        });
+
+        window.onload = startAutoScroll;
+    </script>
 </head>
 <body>
     <div class="container mx-auto p-4">
-        <h1 class="text-2xl md:text-3xl font-bold text-center mb-4" style="color: #F0F0F0;">
-            Developer dibalik BukuKU <br>
-            Capstone MSIB Batch 7 Fullstack Web Developer at LearningX Axademy
+        <h1 class="text-2xl md:text-3xl font-bold text-center" style="color: #F0F0F0;">
+            Kesan Kesan <br>
+            <span class="flex justify-center items-center" style="display: flex; justify-content: center; align-items: center;">
+                Developer Dibalik
+                <img src="../static/developer.png" alt="developer" style="width: 12%; height: auto; margin-left: 8px;">
+            </span>
+            Capstone MSIB Batch 7 Fullstack Web Developer at LearningX Academy
             <br>
-            <span class="text-xs" style="font-size: 15px; color: #F0F0F0; font-weight: 400;">Gedung Pacific Century Place
-            Jl. Jenderal Sudirman KAV 52-53 RT. 005 RW 003 Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 📍</span>
+            <span class="text-xs" style="font-size: 15px; color: #F0F0F0; font-weight: 400;">
+                Gedung Pacific Century Place Jl. Jenderal Sudirman KAV 52-53 RT. 005 RW 003 Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 📍
+            </span>
         </h1>
     </div>
-
+    
+    
     <div class="box-child">
         <div class="profile-box">
             <div class="profile-picture">
@@ -156,8 +209,8 @@
             </div>
             <div class="profile-details">
                 <h2>Wahyu Pratama S.Kom.</h2>
-                <h4 class="title">Role : Developer</h4>
-                <p>Terima kasih sebesar-besarnya kepada Kak Himawa dan seluruh kru di LearningX Academy atas satu semester yang sangat berharga sebagai mentor dalam pelatihan Fullstack Web Developer 😹</p>
+                <h4 class="title">Role : Developer/UIUX at EduBooks</h4>
+                <p>Terima kasih sebesar-besarnya kepada Kak Himawa dan seluruh mentor di LearningX Academy atas satu semester yang sangat berharga sebagai mentor dalam pelatihan Fullstack Web Developer 😹</p>
                 <span>Malang, Indonesia</span>
                 <div class="icon-profile">
                     <a href="https://www.linkedin.com/in/wahyupratama24/"><i class="fa-brands fa-linkedin"></i></a> 
@@ -207,43 +260,13 @@
         </div>
     </div>
 
-    <div class="garis-vertikal"></div>
-
-    <script>
-        let isScrolling = false;
-        let scrollDirection = 'down';
-        let scrollInterval;
-
-        function autoScroll() {
-            if (!isScrolling) {
-                if (scrollDirection === 'down') {
-                    window.scrollBy(0, 100);
-                    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
-                        scrollDirection = 'up';
-                    }
-                } else if (scrollDirection === 'up') {
-                    window.scrollBy(0, -100);
-                    if (window.scrollY <= 0) {
-                        scrollDirection = 'down';
-                    }
-                }
-            }
-        }
-
-        function startAutoScroll() {
-            scrollInterval = setInterval(autoScroll, 30);
-        }
-
-        window.addEventListener('wheel', function(event) {
-            isScrolling = true;
-            clearInterval(scrollInterval);
-            setTimeout(function() {
-                isScrolling = false;
-                startAutoScroll();
-            }, 2000);
-        });
-
-        window.onload = startAutoScroll;
-    </script>
+    <div class="garis-vertikal" style="display: flex; flex-direction: row; align-items: flex-start;">
+        <div class="garis" style="width: 2px; background-color: black; height: 100%;"></div> 
+        <div style="display: flex; align-items: center; justify-content: center; padding-left: 20px; width: auto; height: auto;">
+          <span style="width: 500px; color: gray;"><strong>EduBooks</strong> hadir untuk mengingatkan pentingnya membaca di era digital, sebagai kunci untuk memperluas pengetahuan dan memperkaya diri melalui buku, yang tetap relevan di tengah perkembangan teknologi.</span>
+        </div>
+      </div>
+    
+      
 </body>
 </html>
