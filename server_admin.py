@@ -17,11 +17,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 client = MongoClient(MONGODB_URL)
 db = client[DB_NAME]
 
-
-# Definisikan variabel UPLOAD_FOLDER
 UPLOAD_FOLDER = 'static/uploads'
 
-# Fungsi untuk memeriksa format file yang diperbolehkan
 def allowed_file(filename):
     allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
@@ -74,9 +71,6 @@ def registrasi():
 
     return render_template("server/registrasi_server.html")
 
-# @admin_blueprint.route("/dashboard_toko")
-# def dashboardPenjual():
-#     return render_template("server/dashboard_toko.html")
 
 @admin_blueprint.route("/dashboard_toko", methods=['GET', 'POST'])
 def dashboardPenjual():
@@ -85,46 +79,38 @@ def dashboardPenjual():
             return redirect(url_for('admin.login'))
         
         if request.method == 'POST':
-            # Mengambil data dari form
             penulis_receive = request.form.get('penulis_give')
             judul_receive = request.form.get('judul_give')
             harga_receive = request.form.get('harga_give')
 
-            # Validasi file upload
             if 'file_give' not in request.files:
                 return jsonify({'error': 'Tidak ada file yang diunggah'}), 400
 
             file = request.files['file_give']
             harga_receive = int(harga_receive)
 
-            # Cek format file
             if file and allowed_file(file.filename):
-                # Simpan gambar ke folder static/uploads
                 timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                 filename = secure_filename(f"{file.filename.rsplit('.', 1)[0]}-{timestamp}.{file.filename.rsplit('.', 1)[-1]}")
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
-                
-                # Buat folder jika belum ada
-                # os.makedirs(UPLOAD_FOLDER, exist_ok=True)
                 
                 file.save(filepath)
             else:
                 return jsonify({'error': 'Format file tidak didukung'}), 400
 
-            # Menyimpan data ke MongoDB
+
             doc = {
                 'penulis': penulis_receive,
                 'judul': judul_receive,
                 'harga': harga_receive,
                 'image': filename
             }
-            # Pastikan variabel `db` sudah didefinisikan sebelumnya
+
             db.books.insert_one(doc)
 
             print(f"Data berhasil disimpan: {doc}")
             return jsonify({'msg': 'Data buku berhasil disimpan!'}), 200
 
-        # Jika metode request adalah GET, tampilkan halaman dashboard
         return render_template("server/dashboard_toko.html", username=session["username"])
 
     except Exception as e:

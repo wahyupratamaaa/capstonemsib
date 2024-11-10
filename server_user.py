@@ -29,16 +29,13 @@ def login():
         user = db.Pengguna.find_one({"username": username})
 
         if user and check_password_hash(user["password"], password):
-            # Menyimpan username ke dalam session
-            # session["user_id"] = str(user["_id"]) 
+
             session["username"] = user["username"] 
-            # session["password"] = user["password"]
 
             return jsonify({"message": f"Hi Selamat Datang "}), 200
         else:
             return jsonify({"error": "Username atau password salah"}), 401
 
-    # Mengembalikan tampilan login jika metode GET
     return render_template("clients/login.html")
 
 
