@@ -98,7 +98,6 @@ def dashboardPenjual():
             else:
                 return jsonify({'error': 'Format file tidak didukung'}), 400
 
-
             doc = {
                 'penulis': penulis_receive,
                 'judul': judul_receive,
@@ -136,8 +135,9 @@ def produk():
     for book in books:
         book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
     print("Books:", books)
+    return jsonify(books), 200
 
-    return render_template("server/produk_server.html")
+    # return render_template("server/produk_server.html")
 
 
 @admin_blueprint.route("/checkout")
