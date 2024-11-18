@@ -11,7 +11,6 @@ load_dotenv(dotenv_path)
 MONGODB_URL = os.getenv('MONGODB_URL')
 DB_NAME = os.getenv('DB_NAME')
 SECRET_KEY = os.getenv('SECRET_KEY','default-secret-key')
-print('user_secret_key:', SECRET_KEY)
 
 client = MongoClient(MONGODB_URL)
 db = client[DB_NAME]

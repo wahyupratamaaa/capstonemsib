@@ -93,16 +93,23 @@ def dashboardPenjual():
                 timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                 filename = secure_filename(f"{file.filename.rsplit('.', 1)[0]}-{timestamp}.{file.filename.rsplit('.', 1)[-1]}")
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
+
+
                 
                 file.save(filepath)
+
             else:
                 return jsonify({'error': 'Format file tidak didukung'}), 400
-
+            # count = db.books.count_documents({})
+            # num = count + 1
+            
             doc = {
                 'penulis': penulis_receive,
                 'judul': judul_receive,
                 'harga': harga_receive,
-                'image': filename
+                'image': filename,
+                # "num" : num,
+                # "done" : 0
             }
 
             db.books.insert_one(doc)
@@ -135,10 +142,11 @@ def produk():
     for book in books:
         book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
     print("Books:", books)
-    return jsonify(books), 200
+    # return jsonify(books), 200
 
-    # return render_template("server/produk_server.html")
+    # return render_template("server/produk_server.html", books=books)
 
+    return render_template("server/produk_server.html")
 
 @admin_blueprint.route("/checkout")
 def checkout():

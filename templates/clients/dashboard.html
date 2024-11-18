@@ -353,7 +353,6 @@
 
         console.log("datamasuk", loginStatus, password, username); 
 
-        // Jika login berhasil
         if (loginStatus === 'success') {
             Swal.fire({
                 icon: 'success',
@@ -363,7 +362,6 @@
                 showConfirmButton: false
             });
 
-            // Tampilkan username di dropdown
             document.getElementById('welcomeMessage').innerText = `Hai, selamat datang ${username}`;
             localStorage.removeItem('loginStatus');
         } else {
@@ -375,7 +373,6 @@
             }
         }
 
-        // Logout functionality
         document.getElementById('logout').addEventListener('click', function() {
             localStorage.removeItem('username'); // Hapus username saat logout
             window.location.href = '/login'; 
