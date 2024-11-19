@@ -20,7 +20,7 @@ db = client[DB_NAME]
 UPLOAD_FOLDER = 'static/uploads'
 
 def allowed_file(filename):
-    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'avif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
@@ -42,7 +42,6 @@ def login():
             return jsonify({"message": f"Hi , Selamat Datang "}), 200
         else:
             return jsonify({"error": "Username atau password salah"}), 401
-
     return render_template("server/login_server.html")
 
 
@@ -59,7 +58,6 @@ def registrasi():
             return jsonify({"error": "Password dan konfirmasi password tidak cocok"}), 400
 
         hashed_password = generate_password_hash(password)
-
         user_data = {
             "username": username,
             "password": hashed_password,
@@ -94,8 +92,6 @@ def dashboardPenjual():
                 filename = secure_filename(f"{file.filename.rsplit('.', 1)[0]}-{timestamp}.{file.filename.rsplit('.', 1)[-1]}")
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
 
-
-                
                 file.save(filepath)
 
             else:
@@ -111,9 +107,7 @@ def dashboardPenjual():
                 # "num" : num,
                 # "done" : 0
             }
-
             db.books.insert_one(doc)
-
             print(f"Data berhasil disimpan: {doc}")
             return jsonify({'msg': 'Data buku berhasil disimpan!'}), 200
 
@@ -128,25 +122,27 @@ def logout():
     session.clear() 
     return redirect(url_for('admin.login'))
 
-
 @admin_blueprint.route("/dashboard_server")
 def dashboard():
     if "user_id" in session:
         return render_template("server/dashboard_server.html", username=session["username"])
     return redirect(url_for('login.server'))
 
+@admin_blueprint.route("/produk_server")
+def produk_server():
+    return render_template("server/produk_server.html")
 
-@admin_blueprint.route("/produk_server", methods=["GET"])
-def produk():
+@admin_blueprint.route("/produk_json", methods=["GET"])
+def produk_json():
     books = list(db.books.find({}, {'_id': False}))
     for book in books:
         book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
-    print("Books:", books)
-    # return jsonify(books), 200
+    # print("Books:", books)
+    return jsonify({'books': books})
 
     # return render_template("server/produk_server.html", books=books)
 
-    return render_template("server/produk_server.html")
+    # return render_template("server/produk_server.html")
 
 @admin_blueprint.route("/checkout")
 def checkout():

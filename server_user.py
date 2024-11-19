@@ -30,11 +30,9 @@ def login():
         if user and check_password_hash(user["password"], password):
 
             session["username"] = user["username"] 
-
             return jsonify({"message": f"Hi Selamat Datang "}), 200
         else:
             return jsonify({"error": "Username atau password salah"}), 401
-
     return render_template("clients/login.html")
 
 

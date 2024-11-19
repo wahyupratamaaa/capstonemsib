@@ -25,8 +25,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Produk</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM9cl07n8Z7w/RSYsl3d5C6T7Z5aXhb4Z9Or8au" crossorigin="anonymous">
-
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM9cl07n8Z7w/RSYsl3d5C6T7Z5aXhb4Z9Or8au" crossorigin="anonymous"> -->
+    <head>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+    
     <link
       href="https://fonts.googleapis.com/css2?family=Jua&display=swap"
       rel="stylesheet"
@@ -42,22 +45,6 @@
       * {
         font-family: "Poppins", serif;
       }
-      * { font-family: "Poppins", serif; }
-        .carousel .slide-inner { position: relative; overflow: hidden; display: flex; }
-        .carousel .slide-item { display: none; flex: 1 0 100%; }
-        .carousel .slide-item.active { display: block; }
-        .control-prev, .control-next {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.3); border: none; padding: 10px; cursor: pointer; color: white;
-        }
-        .control-prev { left: 10px; }
-        .control-next { right: 10px; }
-
-        .btn-outline-black:hover{
-          background-color: #5D76E1;
-          color: white;
-          border-color: #FFFFFF;
-        }
         .btn-outline-black {
           color: black;
           border-color: black;
@@ -166,7 +153,6 @@
         gap: 20px;
         flex-wrap: wrap;
         margin-top: 5rem;
-        cursor: pointer;
     }
 
     .card {
@@ -185,20 +171,16 @@
 
     }
 
-
       .card-item img {
-        max-width: 120px;
-        max-height: 120px; 
-        object-fit: cover;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-        padding: auto 5px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-
+      width: 100%; /* Atur lebar gambar agar memenuhi kontainer */
+      height: 165px; /* Tetapkan tinggi tetap */
+      object-fit: cover; /* Gambar akan diisi tanpa mengubah aspek rasio */
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      padding: 5px;
+      margin: auto;
+      display: block; /* Pusatkan gambar */
+  }
 
 
       .card:hover {
@@ -238,16 +220,16 @@
       .input-group {
         width: 20%;
       }
-        
     </style>
     <script>
      window.onload = function() {
-       window.location.replace('#beranda');
+      //  window.location.replace('#beranda');
+       showCard();
      };
       function login() {
         window.location.href = "/login";
       }
-      function daftar() {
+      function daftar() { 
         window.location.href = "/registrasi";
       }
 
@@ -255,26 +237,49 @@
       window.location.href = "/admin/dashboard_server";
     }
 
-    function cardBooks() {
-  $.ajax({
-    url: "/admin/produk_server",
-    type: "GET",
-    success: function(response) {
-      console.log("Data Produk:", response);  // Ini akan menampilkan data produk yang diterima dari server
-      // Pastikan response adalah array dari buku
-      if (Array.isArray(response)) {
-        response.forEach(function(book) {
-          console.log(book);  // Cek setiap buku yang diterima
-        });
-      }
-    },
-    error: function(xhr, status, error) {
-      console.log("Error:", error);  // Menangani error jika terjadi
-    }
-  });
+    function showCard() {
+    $.ajax({
+        type: "GET",  // Pastikan menggunakan metode GET sesuai dengan backend
+        url: "/admin/produk_json",
+        success: function (response) {
+            console.log("Data Produk:", response);
+
+            // Ambil array buku dari respons
+            let data = response["books"];
+            console.log("Data yang diterima:", data);
+
+            // Clear dulu list produk yang ada (jika perlu)
+            $("#card-books").empty();
+
+            // Loop untuk setiap buku dan buat card-nya
+            data.forEach(function (book) {
+                // Membuat card HTML untuk setiap buku
+                let cardHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-item">
+                                <img src="${book.image}" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                            </div>
+                            <h5 class="card-title text-muted">${book.penulis}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">${book.judul}</h6>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="mb-0" style="font-size: 12px;color: gray"><strong> Rp ${book.harga}</strong></p>
+                                <div class="d-flex gap-2" style="cursor: pointer;font-size: small;">
+                                  <i class="fa-solid fa-eraser" style="color: rgb(0, 170, 255);"></i>
+                                <i class="fa-solid fa-trash-can-arrow-up" style="color: rgb(255, 114, 114);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Menambahkan card yang sudah dibuat ke dalam #product-list
+                $("#card-books").append(cardHTML);
+            });
+        }
+    });
 }
 
-     
     </script>
   </head>
   <body>
@@ -299,156 +304,8 @@
 
 
 
-  <div class="card-container" id="card-books">
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/items/9786024246945_Laut-Bercerita.png" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Khoirul Trian</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Ayah, Ini Arahnya ke Mana, ya?</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp79.000</strong></p>
-                <p class="mb-0 mt-0"  style="opacity: 50%; display: flex; justify-items: center; align-items: center;">x</p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/picture_meta/2023/3/23/zykkopf62ysujbgvhnt8v4.jpg" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Anna Claybourne</h5>
-            <h6 class="card-subtitle mb-2 text-muted">73 Trik Sains Keren</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp95.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/items/9786024246945_Laut-Bercerita.png" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Khoirul Trian</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Ayah, Ini Arahnya ke Mana, ya?</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp79.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/picture_meta/2023/3/23/zykkopf62ysujbgvhnt8v4.jpg" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Anna Claybourne</h5>
-            <h6 class="card-subtitle mb-2 text-muted">73 Trik Sains Keren</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp95.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/items/9786024246945_Laut-Bercerita.png" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Khoirul Trian</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Ayah, Ini Arahnya ke Mana, ya?</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp79.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/picture_meta/2023/3/23/zykkopf62ysujbgvhnt8v4.jpg" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Anna Claybourne</h5>
-            <h6 class="card-subtitle mb-2 text-muted">73 Trik Sains Keren</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp95.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/items/9786024246945_Laut-Bercerita.png" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Khoirul Trian</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Ayah, Ini Arahnya ke Mana, ya?</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp79.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/picture_meta/2023/3/23/zykkopf62ysujbgvhnt8v4.jpg" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Anna Claybourne</h5>
-            <h6 class="card-subtitle mb-2 text-muted">73 Trik Sains Keren</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp95.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/items/9786024246945_Laut-Bercerita.png" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Khoirul Trian</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Ayah, Ini Arahnya ke Mana, ya?</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp79.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/picture_meta/2023/3/23/zykkopf62ysujbgvhnt8v4.jpg" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Anna Claybourne</h5>
-            <h6 class="card-subtitle mb-2 text-muted">73 Trik Sains Keren</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp95.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/items/9786024246945_Laut-Bercerita.png" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Khoirul Trian</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Ayah, Ini Arahnya ke Mana, ya?</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp79.000</strong></p>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="card-item">
-                <img src="https://image.gramedia.net/rs:fit:256:0/plain/https://cdn.gramedia.com/uploads/picture_meta/2023/3/23/zykkopf62ysujbgvhnt8v4.jpg" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-            </div>
-            <h5 class="card-title text-muted">Anna Claybourne</h5>
-            <h6 class="card-subtitle mb-2 text-muted">73 Trik Sains Keren</h6>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0" style="font-size: 12px;"><strong> Rp95.000</strong></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-        </div>
-       </div>
+  <div class="card-container" id="card-books"></div>
+ </div>
 <div class="container-footer">
   <footer class="py-5 px-10">
     <div class="row px-5">
