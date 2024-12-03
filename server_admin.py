@@ -5,6 +5,8 @@ from datetime import datetime
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
+# import logging
+
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -15,6 +17,10 @@ DB_NAME = os.getenv('DB_NAME')
 
 client = MongoClient(MONGODB_URL)
 db = client[DB_NAME]
+# logging.basicConfig(level=logging.DEBUG)
+# print(client.list_database_names)
+
+
 
 UPLOAD_FOLDER = 'static/uploads'
 

@@ -4,6 +4,7 @@ from server_user import user_blueprint
 # from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+# import logging
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -15,6 +16,8 @@ load_dotenv(dotenv_path)
 # client = MongoClient(MONGODB_URL, tls=True, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
 # db = client[DB_NAME]
 # client.server_info()
+# logging.basicConfig(level=logging.DEBUG)
+# print()
 
 app = Flask(__name__)
 
