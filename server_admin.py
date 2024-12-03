@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, Blueprint, render_template, request, jsonify, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -12,7 +12,6 @@ load_dotenv(dotenv_path)
 
 MONGODB_URL = os.getenv('MONGODB_URL')
 DB_NAME = os.getenv('DB_NAME')
-SECRET_KEY = os.getenv('SECRET_KEY')
 
 client = MongoClient(MONGODB_URL)
 db = client[DB_NAME]
@@ -36,8 +35,6 @@ def login():
         user = db.Toko.find_one({"username": username})
 
         if user and check_password_hash(user["password"], password):
-            session["user_id"] = str(user["_id"])
-            session["username"] = user["username"]
 
             return jsonify({"message": f"Hi , Selamat Datang "}), 200
         else:
@@ -73,9 +70,6 @@ def registrasi():
 @admin_blueprint.route("/dashboard_toko", methods=['GET', 'POST'])
 def dashboardPenjual():
     try:
-        if "username" not in session:
-            return redirect(url_for('admin.login'))
-        
         if request.method == 'POST':
             penulis_receive = request.form.get('penulis_give')
             judul_receive = request.form.get('judul_give')
@@ -91,27 +85,27 @@ def dashboardPenjual():
                 timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                 filename = secure_filename(f"{file.filename.rsplit('.', 1)[0]}-{timestamp}.{file.filename.rsplit('.', 1)[-1]}")
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
+                count = db.books.count_documents({})
+                print('data count', count)
+                num = count + 1
 
                 file.save(filepath)
 
             else:
                 return jsonify({'error': 'Format file tidak didukung'}), 400
-            # count = db.books.count_documents({})
-            # num = count + 1
             
             doc = {
                 'penulis': penulis_receive,
                 'judul': judul_receive,
                 'harga': harga_receive,
                 'image': filename,
-                # "num" : num,
-                # "done" : 0
+                'num': num,
             }
             db.books.insert_one(doc)
             print(f"Data berhasil disimpan: {doc}")
             return jsonify({'msg': 'Data buku berhasil disimpan!'}), 200
 
-        return render_template("server/dashboard_toko.html", username=session["username"])
+        return render_template("server/dashboard_toko.html")
 
     except Exception as e:
         print(f"Error saat menyimpan data: {e}")
@@ -119,14 +113,11 @@ def dashboardPenjual():
 
 @admin_blueprint.route("/logout")
 def logout():
-    session.clear() 
-    return redirect(url_for('admin.login'))
+    return render_template("./templates/index.html")
 
 @admin_blueprint.route("/dashboard_server")
 def dashboard():
-    if "user_id" in session:
-        return render_template("server/dashboard_server.html", username=session["username"])
-    return redirect(url_for('login.server'))
+        return render_template("server/dashboard_server.html")
 
 @admin_blueprint.route("/produk_server")
 def produk_server():
@@ -137,12 +128,7 @@ def produk_json():
     books = list(db.books.find({}, {'_id': False}))
     for book in books:
         book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
-    # print("Books:", books)
     return jsonify({'books': books})
-
-    # return render_template("server/produk_server.html", books=books)
-
-    # return render_template("server/produk_server.html")
 
 @admin_blueprint.route("/checkout")
 def checkout():
@@ -156,10 +142,8 @@ def dashboardProduk():
 def kontak():
     return render_template("clients/kontak.html")
 
-
 def create_app():
     app = Flask(__name__)
-    app.secret_key = SECRET_KEY
     app.register_blueprint(admin_blueprint, url_prefix='/admin')
     return app
 

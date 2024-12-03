@@ -36,6 +36,8 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="../../static/css/card.css">
+
     <style>
       * {
         font-family: "Poppins", serif;
@@ -90,9 +92,6 @@
           height: 13.5rem;
           border-radius: 15px;
         }
-        .nav-item{
-          color:black
-        }
         * {
           margin:0;
           padding: 0;
@@ -131,9 +130,6 @@
           border-top: 2px dashed gray;
           padding-top: 2rem;
         }
-        .footer {
-          margin-top: 200rem;
-        }
         .nav-item .nav-link{
           font-size: 12px;
           color: #6c757d;
@@ -143,14 +139,6 @@
           color: black;
           /* margin: 50px; */
         }
-        .container-footer {
-          width: 100%;
-          height: auto;
-          margin: 5px;
-          padding: 0;
-          margin-top: 5rem;
-          background-color: #EFEFEF;
-        }
         .store {
           display: flex;
           gap: 1rem;
@@ -158,90 +146,10 @@
           align-items: flex-start;
           justify-content: flex-start;
         }
-       /* .card {
-        width: 18rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease;
-        gap: 1rem;
-        margin-top: 2rem;
-        
-
-       } */
-       .card-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        
-        gap: 20px;
-        flex: wrap;
-       }
-       .card-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: start;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin-top: 5rem;
-        cursor: pointer;
-        
-    }
-
-    .card {
-        width: calc(15% - 10px); 
-        /* width: auto; */
-        max-width: 300px;
-        box-sizing: border-box;
-        margin-bottom: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease;
-        
-    }
-
-    .card-body {
-        padding: 10px;
-        width: 100%;
-      
-
-    }
-
-
-      .card-item img {
-        max-width: 120px; /* contoh ukuran lebar maksimum kecil */
-        max-height: 120px; /* contoh ukuran tinggi maksimum kecil */
-        object-fit: cover; /* untuk membuat gambar tetap proporsional */
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-        padding: auto 5px;
-        display: flex;
-        /* flex-direction: row; */
-        justify-content: center;
-        align-items: center;
-      }
 
 
 
 
-      .card:hover {
-        transform: scale(1.05);
-      }
-
-
-      .card-title {
-        font-size: 0.8rem;
-        font-weight: bold;
-      }
-
-      .card-subtitle {
-        font-size: 0.6rem;
-        color: #6c757d;
-      }
-      .card-item {
-        /* d-flex flex-row align-items-center */
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-      }
       .text-navbar{
         color: black;
         text-decoration: none;
@@ -340,67 +248,13 @@
       <div style="margin-top: 0.5rem ;">
         <img src="../static/bank/Bank MANDIRI.png" alt="MANDIRI" style="width: 15%; height: auto;">
       </div>
-      
     </div>
     
 </div>
 <button type="button" class="btn btn-outline-success btn-sm" style="margin-top: 1rem;" onclick="sukses()">Checkout</button>
         </div>
-       </div>
-<div class="container-footer">
-  <footer class="py-5 px-10">
-    <div class="row px-5">
-      <div class="col-6 col-md-2 mb-3">
-        <h6 class="tagline">Produk EduBooks</h6>
-        <ul class="nav flex-column">
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary ">EduBooks Afiliasi</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary ">Mitra Afiliasi</a></li>
-        </ul>
-      </div>
+  {% include 'dev/footer.html' %}
 
-      <div class="col-6 col-md-2 mb-3">
-        <h6 class="tagline">Informasi Belanja</h6>
-        <ul class="nav flex-column">
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Berbelanja</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pembayaran</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pengiriman</a></li>
-        </ul>
-      </div>
-
-      <div class="col-6 col-md-2 mb-3">
-        <h6 class="tagline">Tentang EduBooks</h6>
-        <ul class="nav flex-column">
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Tentang Kami</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Toko Kami</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
-        </ul>
-      </div>
-
-      <div class="col-md-5 offset-md-1 mb-3">
-        <form>
-          <h6 style="margin-left: auto;">Aplikasi Seluler Kami</h6>
-          <p class="text-sm" style="font-size: 14px;">Download aplikasi EduBooks yang tersedia di seluruh perangkat iOS dan Android</p>
-          <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-           <div class="d-flex flex-row gap-2" style="width: 30%; height: auto;">
-            <img src="../static/apple-app-store.webp" alt="app" width="50%" height="auto">
-            <img src="../static/google-play.webp" alt="app" width="50%" height="auto">
-          </div>
-             </div>
-          </div>
-        </form>
-      </div>
-      <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top px-5">
-        <h6 class="text-muted">© 2024 Company, Inc. All rights reserved.</h6>
-        <ul class="list-unstyled d-flex">
-          <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
-          <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
-          <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
-        </ul>
-      </div>
-    </div>
-  </footer>
 </div>
   </body>
 </html>

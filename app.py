@@ -1,18 +1,22 @@
-
 from flask import Flask,render_template
 from server_admin import admin_blueprint
 from server_user import user_blueprint
+# from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-print('user_secret_key:', SECRET_KEY)
+# MONGODB_URL = os.getenv('MONGODB_URL')
+# DB_NAME = os.getenv('DB_NAME')
+
+# client = MongoClient(MONGODB_URL)
+# client = MongoClient(MONGODB_URL, tls=True, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
+# db = client[DB_NAME]
+# client.server_info()
 
 app = Flask(__name__)
-app.secret_key = SECRET_KEY 
 
 app.register_blueprint(admin_blueprint, url_prefix='/admin')
 app.register_blueprint(user_blueprint, url_prefix='/user')
@@ -23,9 +27,14 @@ print('-' * 50, 'app.py', '-' * 50)
 def index():
     return render_template("index.html")
 
+@app.route('/footer')
+def footer():
+    return render_template("dev/footer.html")
+
 @app.route("/ruangdeveloper")
 def tentang():
     return render_template("dev/ruangdeveloper.html")
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000, debug=True)
+

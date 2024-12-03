@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, render_template, request, jsonify, url_for
+from flask import Flask, Blueprint, render_template, request, jsonify, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from pymongo import MongoClient
@@ -10,6 +10,7 @@ load_dotenv(dotenv_path)
 
 MONGODB_URL = os.getenv('MONGODB_URL')
 DB_NAME = os.getenv('DB_NAME')
+# SECRET_KEY = os.getenv('SECRET_KEY','default-secret-key')
 
 client = MongoClient(MONGODB_URL)
 db = client[DB_NAME]
@@ -28,6 +29,7 @@ def login():
 
         if user and check_password_hash(user["password"], password):
 
+            session["username"] = user["username"] 
             return jsonify({"message": f"Hi Selamat Datang "}), 200
         else:
             return jsonify({"error": "Username atau password salah"}), 401
@@ -61,12 +63,17 @@ def registrasi():
 
 @user_blueprint.route("/logout")
 def logout():
-    return render_template('/templates/index.html')
+    session.pop("user_id", None)
+    session.pop("username", None)
+    return redirect(url_for('user.login'))
 
 
 @user_blueprint.route("/dashboard")
 def dashboard():
+    # if "user_id" in session:
         return render_template("clients/dashboard.html")
+    # return redirect(url_for('user.login')) 
+
 
 @user_blueprint.route("/produk")
 def produk():
@@ -77,9 +84,11 @@ def produk():
 def checkout():
     return render_template("clients/checkout.html")
 
+
 @user_blueprint.route("/dashboardProduk")
 def dashboardProduk():
     return render_template("clients/dashboardProduk.html")
+
 
 @user_blueprint.route("/kontak")
 def kontak():
@@ -93,6 +102,7 @@ def dashboardPenjual():
 
 def create_app():
     app = Flask(__name__)
+    # app.secret_key = SECRET_KEY
     app.register_blueprint(user_blueprint, url_prefix='/user')
     return app
 
