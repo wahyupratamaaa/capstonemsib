@@ -210,8 +210,9 @@
             $("#card-books").empty();
 
             data.forEach(function (book) {
+              let num = book.id;
               let cardHTML = `
-                    <div class="card">
+                    <div class="card" id="${num}>
                         <div class="card-body">
                             <div class="card-item">
                                 <img src="${book.image}" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">

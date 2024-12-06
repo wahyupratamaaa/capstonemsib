@@ -1,7 +1,7 @@
 from flask import Flask,render_template
 from server_admin import admin_blueprint
 from server_user import user_blueprint
-# from pymongo import MongoClient
+from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 # import logging
@@ -37,6 +37,9 @@ def footer():
 @app.route("/ruangdeveloper")
 def tentang():
     return render_template("dev/ruangdeveloper.html")
+# @app.route("/dashboard_update")
+# def dashboard_edit_produk():
+#     return render_template("server/dashboard_edit.html")
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000, debug=True)

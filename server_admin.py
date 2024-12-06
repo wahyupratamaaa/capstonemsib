@@ -5,7 +5,8 @@ from datetime import datetime
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
-# import logging
+from bson.objectid import ObjectId
+
 
 
 
@@ -17,16 +18,17 @@ DB_NAME = os.getenv('DB_NAME')
 
 client = MongoClient(MONGODB_URL)
 db = client[DB_NAME]
-# logging.basicConfig(level=logging.DEBUG)
-# print(client.list_database_names)
+
 
 
 
 UPLOAD_FOLDER = 'static/uploads'
 
+# def allowed_file(filename):
+#     allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'avif'}
+#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 def allowed_file(filename):
-    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'avif'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+    return '.' in filename and filename.rsplit('.', 1)[-1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
@@ -117,6 +119,69 @@ def dashboardPenjual():
         print(f"Error saat menyimpan data: {e}")
         return jsonify({'error': 'Terjadi kesahalan dalam menyimpan data'}), 500
 
+
+
+@admin_blueprint.route("/update/<judul>", methods=['GET', 'POST'])
+def edit_data(judul):
+    try:
+        if request.method == 'POST':
+            penulis_receive = request.form.get('penulis_give')
+            judul_receive = request.form.get('judul_give')
+            harga_receive = int(request.form.get('harga_give'))
+
+
+            file = request.files.get('file_give')
+            if file and allowed_file(file.filename):
+
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                filename = secure_filename(f"{file.filename.rsplit('.', 1)[0]}-{timestamp}.{file.filename.rsplit('.', 1)[-1]}")
+                filepath = os.path.join(UPLOAD_FOLDER, filename)
+                count = db.books.count_documents({})
+                num = count + 1
+
+                os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+                file.save(filepath)
+
+
+                db.books.update_one(
+                    {'judul': judul},
+                    {'$set': {
+                        'penulis': penulis_receive,
+                        'judul': judul_receive,
+                        'harga': harga_receive,
+                        'image': filename,
+                        'num': num
+                    }}
+                )
+            else:
+
+                db.books.update_one(
+                    {'judul': judul},
+                    {'$set': {
+                        'penulis': penulis_receive,
+                        'judul': judul_receive,
+                        'harga': harga_receive,
+                        'num': num
+                    }}
+                )
+
+
+        data = db.books.find_one({'judul': judul})
+        return render_template("dev/dashboard_edit.html", data=data)
+    except Exception as e:
+        print(f"Terjadi kesalahan: {e}")
+        return jsonify({'error': 'Terjadi kesalahan pada server'}), 500
+
+    
+@admin_blueprint.route("/delete/<judul>", methods=['POST'])
+def delete_data(judul):
+    try:
+        db.books.delete_one({'judul': judul})
+        return jsonify({'msg': 'Data berhasil dihapus!'}), 200
+    except Exception as e:
+        print(f"Terjadi kesalahan: {e}")
+        return jsonify({'error': 'Terjadi kesalahan pada server'}), 500
+
 @admin_blueprint.route("/logout")
 def logout():
     return render_template("./templates/index.html")
@@ -147,6 +212,7 @@ def dashboardProduk():
 @admin_blueprint.route("/kontak")
 def kontak():
     return render_template("clients/kontak.html")
+
 
 def create_app():
     app = Flask(__name__)
