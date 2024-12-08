@@ -6,33 +6,31 @@ from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
+from connection import get_collection
 
 
+# dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+# load_dotenv(dotenv_path)
+# load_dotenv()
 
+# MONGODB_URL = os.getenv('MONGODB_URL')
+# DB_NAME = os.getenv('DB_NAME')
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+# client = MongoClient(MONGODB_URL)
+# db = client[DB_NAME]
 
-MONGODB_URL = os.getenv('MONGODB_URL')
-DB_NAME = os.getenv('DB_NAME')
-
-client = MongoClient(MONGODB_URL)
-db = client[DB_NAME]
-
-
-
+books = get_collection("books")
+toko = get_collection("mitra")
 
 UPLOAD_FOLDER = 'static/uploads'
 
-# def allowed_file(filename):
-#     allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'avif'}
-#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[-1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
-
+    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'avif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+# def allowed_file(filename):
+#     return '.' in filename and filename.rsplit('.', 1)[-1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
-
 @admin_blueprint.route("/login_server", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -40,7 +38,7 @@ def login():
         username = data.get("username")
         password = data.get("password")
         
-        user = db.Toko.find_one({"username": username})
+        user = toko.find_one({"username": username})
 
         if user and check_password_hash(user["password"], password):
 
@@ -69,7 +67,7 @@ def registrasi():
             "created_at": datetime.now()
         }
 
-        db.Toko.insert_one(user_data)
+        toko.insert_one(user_data)
         return jsonify({"message": "Registrasi EduBooks MarketPlace berhasil!"}), 201
 
     return render_template("server/registrasi_server.html")
@@ -93,9 +91,9 @@ def dashboardPenjual():
                 timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                 filename = secure_filename(f"{file.filename.rsplit('.', 1)[0]}-{timestamp}.{file.filename.rsplit('.', 1)[-1]}")
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
-                count = db.books.count_documents({})
-                print('data count', count)
-                num = count + 1
+                # count = books.count_documents({})
+                # print('data count', count)
+                # num = count + 1
 
                 file.save(filepath)
 
@@ -107,9 +105,10 @@ def dashboardPenjual():
                 'judul': judul_receive,
                 'harga': harga_receive,
                 'image': filename,
-                'num': num,
+                # 'num': num,
             }
-            db.books.insert_one(doc)
+            
+            books.insert_one(doc)
             print(f"Data berhasil disimpan: {doc}")
             return jsonify({'msg': 'Data buku berhasil disimpan!'}), 200
 
@@ -136,14 +135,14 @@ def edit_data(judul):
                 timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                 filename = secure_filename(f"{file.filename.rsplit('.', 1)[0]}-{timestamp}.{file.filename.rsplit('.', 1)[-1]}")
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
-                count = db.books.count_documents({})
+                count = books.count_documents({})
                 num = count + 1
 
                 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
                 file.save(filepath)
 
 
-                db.books.update_one(
+                books.update_one(
                     {'judul': judul},
                     {'$set': {
                         'penulis': penulis_receive,
@@ -155,7 +154,7 @@ def edit_data(judul):
                 )
             else:
 
-                db.books.update_one(
+                books.update_one(
                     {'judul': judul},
                     {'$set': {
                         'penulis': penulis_receive,
@@ -166,7 +165,7 @@ def edit_data(judul):
                 )
 
 
-        data = db.books.find_one({'judul': judul})
+        data = books.find_one({'judul': judul})
         return render_template("dev/dashboard_edit.html", data=data)
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
@@ -176,7 +175,7 @@ def edit_data(judul):
 @admin_blueprint.route("/delete/<judul>", methods=['POST'])
 def delete_data(judul):
     try:
-        db.books.delete_one({'judul': judul})
+        books.delete_one({'judul': judul})
         return jsonify({'msg': 'Data berhasil dihapus!'}), 200
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
@@ -196,7 +195,7 @@ def produk_server():
 
 @admin_blueprint.route("/produk_json", methods=["GET"])
 def produk_json():
-    books = list(db.books.find({}, {'_id': False}))
+    books = list(books.find({}, {'_id': False}))
     for book in books:
         book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
     return jsonify({'books': books})

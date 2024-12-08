@@ -1,24 +1,18 @@
 from flask import Flask,render_template
 from server_admin import admin_blueprint
 from server_user import user_blueprint
-from pymongo import MongoClient
-from dotenv import load_dotenv
-import os
+from connection import connect_to_mongodb
+# from pymongo import MongoClient
+# from dotenv import load_dotenv
+# import os
 # import logging
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+# dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+# load_dotenv(dotenv_path)
 
 # MONGODB_URL = os.getenv('MONGODB_URL')
-# DB_NAME = os.getenv('DB_NAME')
-
-# client = MongoClient(MONGODB_URL)
-# client = MongoClient(MONGODB_URL, tls=True, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
-# db = client[DB_NAME]
-# client.server_info()
-# logging.basicConfig(level=logging.DEBUG)
-# print()
-
+# print('kamuu berjalan di ', MONGODB_URL)
+connect_to_mongodb()
 app = Flask(__name__)
 
 app.register_blueprint(admin_blueprint, url_prefix='/admin')
@@ -43,4 +37,3 @@ def tentang():
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000, debug=True)
-

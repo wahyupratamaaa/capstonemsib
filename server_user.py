@@ -1,18 +1,21 @@
 from flask import Flask, Blueprint, render_template, request, jsonify, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from pymongo import MongoClient
-import os
-from dotenv import load_dotenv
+from connection import db
+# from pymongo import MongoClient
+# import os
+# from dotenv import load_dotenv
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+# dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+# load_dotenv(dotenv_path)
+# load_dotenv()
 
-MONGODB_URL = os.getenv('MONGODB_URL')
-DB_NAME = os.getenv('DB_NAME')
 
-client = MongoClient(MONGODB_URL)
-db = client[DB_NAME]
+# MONGODB_URL = os.getenv('MONGODB_URL')
+# DB_NAME = os.getenv('DB_NAME')
+
+# client = MongoClient(MONGODB_URL)
+# db = client[DB_NAME]
 
 user_blueprint = Blueprint('user', __name__, template_folder='templates')
 

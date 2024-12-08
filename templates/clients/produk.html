@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="../static/EduBooks.png" type="image/png" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <meta
       name="viewport"
@@ -189,6 +190,7 @@
       window.onload = function () {
         //  window.location.replace('#beranda');
         showCard();
+        goToCheckout();
       };
       function login() {
         window.location.href = "/login";
@@ -196,11 +198,23 @@
       function daftar() {
         window.location.href = "/registrasi";
       }
+      function goToCheckout(num) {
+      const selectedBook = booksData.find((book) => book.num === num);
+      console.log("ID buku:", selectedBook);
+      if (selectedBook) {
+          console.log("Simpan buku ke localStorage:", selectedBook);
+          localStorage.setItem("selectedBook", JSON.stringify(selectedBook));
+          window.location.href = "/user/checkout"; // Arahkan ke halaman checkout
+      } else {
+          console.error("Buku tidak ditemukan:", num);
+      }
+  }
+
 
       function showCard() {
         $.ajax({
           type: "GET", 
-          url: "/admin/produk_json",
+          url: "/user//produk_json_user",
           success: function (response) {
             console.log("Data Produk:", response);
 
@@ -210,9 +224,11 @@
             $("#card-books").empty();
 
             data.forEach(function (book) {
-              let num = book.id;
+              let num = book.num;
+              console.log("ID buku:", num);
+              
               let cardHTML = `
-                    <div class="card" id="${num}>
+                    <div class="card" id="${num}" onclick="goToCheckout(${num})">
                         <div class="card-body">
                             <div class="card-item">
                                 <img src="${book.image}" alt="cover buku" loading="lazy" style="width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px;">
@@ -232,6 +248,8 @@
           },
         });
       }
+
+
     </script>
   </head>
   <body>
