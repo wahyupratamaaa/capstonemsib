@@ -195,10 +195,11 @@ def produk_server():
 
 @admin_blueprint.route("/produk_json", methods=["GET"])
 def produk_json():
-    books = list(books.find({}, {'_id': False}))
-    for book in books:
+    global books  # Refer to the global variable
+    books_list = list(books.find({}, {'_id': False}))
+    for book in books_list:
         book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
-    return jsonify({'books': books})
+    return jsonify({'books': books_list})
 
 @admin_blueprint.route("/checkout")
 def checkout():
