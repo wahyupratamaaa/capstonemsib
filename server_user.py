@@ -1,7 +1,8 @@
 from flask import Flask, Blueprint, render_template, request, jsonify, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from connection import db
+from connection import db, get_collection
+from bson.objectid import ObjectId
 # from pymongo import MongoClient
 # import os
 # from dotenv import load_dotenv
@@ -16,6 +17,7 @@ from connection import db
 
 # client = MongoClient(MONGODB_URL)
 # db = client[DB_NAME]
+books = get_collection("books")
 
 user_blueprint = Blueprint('user', __name__, template_folder='templates')
 
@@ -75,10 +77,60 @@ def dashboard():
 def produk():
     return render_template("clients/produk.html")
 
+@user_blueprint.route("/produk_json_user", methods=["GET"])
+def produk_json():
+    global books 
+    books_list = list(books.find({}, {'_id': True, 'judul': True, 'image': True, 'penulis': True, 'harga': True}))
+    for book in books_list:
+        book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
+        book['_id'] = str(book['_id'])
+    return jsonify({'books': books_list})
 
-@user_blueprint.route("/checkout")
-def checkout():
-    return render_template("clients/checkout.html")
+
+@user_blueprint.route("/checkout/<book_id>")
+def checkout(book_id):
+    try:
+        book = books.find_one({"_id": ObjectId(book_id)})
+        if book:
+            book['_id'] = str(book['_id']) 
+            book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
+    except Exception as e:
+        return jsonify({"error": "Invalid book ID"}), 400
+
+    if not book:
+        return jsonify({"error": "Book not found"}), 404
+
+    return render_template("clients/checkout.html", book=book)
+
+@user_blueprint.route("/complete_checkout", methods=["POST"])
+def complete_checkout():
+    data = request.get_json()
+    book_id = data.get("book_id")
+    user_id = data.get("user_id")
+
+    if not book_id:
+        return jsonify({"error": "Book ID is required"}), 400
+
+    try:
+        book = books.find_one({"_id": ObjectId(book_id)})
+        if not book:
+            return jsonify({"error": "Book not found"}), 404
+
+        order = {
+            "user_id": user_id,
+            "book_id": book_id,
+            "book_title": book["judul"],
+            "book_price": book["harga"],
+            "order_date": datetime.utcnow()
+        }
+
+        orders = get_collection("orders")
+        orders.insert_one(order)
+
+        return jsonify({"message": "Purchase completed successfully!"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @user_blueprint.route("/dashboardProduk")
 def dashboardProduk():

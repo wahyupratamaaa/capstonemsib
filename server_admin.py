@@ -119,59 +119,61 @@ def dashboardPenjual():
         return jsonify({'error': 'Terjadi kesahalan dalam menyimpan data'}), 500
 
 
-
 @admin_blueprint.route("/update/<judul>", methods=['GET', 'POST'])
 def edit_data(judul):
+    print(judul)
     try:
         if request.method == 'POST':
-            penulis_receive = request.form.get('penulis_give')
-            judul_receive = request.form.get('judul_give')
-            harga_receive = int(request.form.get('harga_give'))
+            penulis_receive = request.form.get('penulis')
+            judul_receive = request.form.get('judul')
+            harga_receive = request.form.get('harga')
 
+            if not penulis_receive or not judul_receive or not harga_receive:
+                return jsonify({'error': 'Semua field harus diisi'}), 400
+
+            harga_receive = int(harga_receive)
 
             file = request.files.get('file_give')
             if file and allowed_file(file.filename):
-
                 timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                 filename = secure_filename(f"{file.filename.rsplit('.', 1)[0]}-{timestamp}.{file.filename.rsplit('.', 1)[-1]}")
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
-                count = books.count_documents({})
-                num = count + 1
 
                 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
                 file.save(filepath)
 
-
-                books.update_one(
-                    {'judul': judul},
-                    {'$set': {
-                        'penulis': penulis_receive,
-                        'judul': judul_receive,
-                        'harga': harga_receive,
-                        'image': filename,
-                        'num': num
-                    }}
-                )
+                update_data = {
+                    'penulis': penulis_receive,
+                    'judul': judul_receive,
+                    'harga': harga_receive,
+                    'image': filename,
+                }
             else:
+                update_data = {
+                    'penulis': penulis_receive,
+                    'judul': judul_receive,
+                    'harga': harga_receive,
+                }
 
-                books.update_one(
-                    {'judul': judul},
-                    {'$set': {
-                        'penulis': penulis_receive,
-                        'judul': judul_receive,
-                        'harga': harga_receive,
-                        'num': num
-                    }}
-                )
+            result = books.update_one(
+                {'judul': judul},
+                {'$set': update_data}
+            )
 
+            if result.modified_count == 0:
+                return jsonify({'error': 'Data tidak ditemukan atau tidak ada perubahan'}), 404
+
+            return jsonify({'msg': 'Data berhasil diperbarui!'}), 200
 
         data = books.find_one({'judul': judul})
+        if not data:
+            return jsonify({'error': 'Data tidak ditemukan'}), 404
+
         return render_template("dev/dashboard_edit.html", data=data)
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
         return jsonify({'error': 'Terjadi kesalahan pada server'}), 500
 
-    
 @admin_blueprint.route("/delete/<judul>", methods=['POST'])
 def delete_data(judul):
     try:
@@ -196,9 +198,10 @@ def produk_server():
 @admin_blueprint.route("/produk_json", methods=["GET"])
 def produk_json():
     global books  # Refer to the global variable
-    books_list = list(books.find({}, {'_id': False}))
+    books_list = list(books.find({}, {'_id': True, 'penulis': True, 'harga': True, 'judul': True, 'image': True}))
     for book in books_list:
         book['image'] = url_for('static', filename=f'uploads/{book["image"]}')
+        book['_id'] = str(book['_id'])
     return jsonify({'books': books_list})
 
 @admin_blueprint.route("/checkout")

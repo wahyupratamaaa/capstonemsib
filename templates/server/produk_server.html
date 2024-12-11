@@ -188,6 +188,87 @@
 }
 
 
+  function updateBook(bookId, bookJudul, bookImage, bookPenulis, bookHarga) {
+    console.log("UPDATED BOOK", bookId);
+  
+    const penulis = bookPenulis || "";
+    const judul = bookJudul || "";
+    const harga = bookHarga || "";
+    const image = bookImage || "placeholder-image-url.jpg"; // Replace with a default placeholder image
+  
+    Swal.fire({
+      title: "Update EduBook",
+      width: "700px",
+      height: "auto",
+      html: `
+        <div style="display: flex; align-items: flex-start; gap: 5px; padding: 10px; padding-left: 0">
+          <div style="flex: 1;">
+            <input id="penulis" class="swal2-input w-75" placeholder="Penulis" value="${penulis}">
+            <input id="judul" class="swal2-input w-75" placeholder="Judul Buku" value="${judul}">
+            <input id="harga" class="swal2-input w-75" placeholder="Rp" value="${harga}">
+            <input id="image" class="swal2-file w-75" type="file" accept="image/*" onchange="previewImage(event)">
+            <img id="image-preview" src="${image}" alt="Image Preview" style="width: 100px; height: auto; margin-top: 10px;">
+          </div>
+        </div>
+      `,
+      preConfirm: () => {
+        const penulis = document.getElementById('penulis').value;
+        const judul = document.getElementById('judul').value;
+        const harga = document.getElementById('harga').value;
+        const imageFile = document.getElementById('image').files[0];
+  
+        const formData = new FormData();
+        formData.append("penulis", penulis);
+        formData.append("judul", judul);
+        formData.append("harga", harga);
+        if (imageFile) {
+          formData.append("file_give", imageFile);
+        }
+  
+        return formData;
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: `/admin/update/${judul}`,
+          type: "POST",
+          data: result.value,
+          contentType: false,
+          processData: false,
+          success: (response) => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Data berhasil diperbarui!',
+              timer: 2000,
+              timerProgressBar: true,
+            });
+            window.location.reload()
+          },
+          error: (xhr, status, error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Gagal memperbarui data',
+              text: xhr.responseJSON.error || 'Terjadi kesalahan',
+              timer: 2000,
+              timerProgressBar: true,
+            });
+          }
+        });
+      }
+    });
+  }
+  
+  function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function() {
+      const output = document.getElementById('image-preview');
+      output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+  
+
+
     function showCard() {
     $.ajax({
         type: "GET",  // Pastikan menggunakan metode GET sesuai dengan backend
@@ -195,7 +276,7 @@
         success: function (response) {
             console.log("Data Produk:", response);
 
-            // Ambil array buku dari respons
+            // Ambil array buku dari response
             let data = response["books"];
             console.log("Data yang diterima:", data);
 
@@ -216,7 +297,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <p class="mb-0 card-price" style="font-size: 12px;color: gray"><strong> Rp ${book.harga}</strong></p>
                 <div class="d-flex gap-2" style="cursor: pointer;font-size: small;">
-                  <i class="fa-regular fa-pen-to-square" style="color: rgb(0, 170, 255);" onclick="updateBook('${book.judul}')"></i>
+                  <i class="fa-regular fa-pen-to-square" style="color: rgb(0, 170, 255);" onclick="updateBook('${book._id}', '${book.judul}', '${book.image}', '${book.penulis}', '${book.harga}')"></i>
                 <i class="fa-solid fa-trash-can" style="color: rgb(255, 114, 114);" onclick="deleteBook('${book.judul}')"></i>
             </div>
             </div>
@@ -233,115 +314,7 @@
     });
 }
 
-function updateBook(num) {
-  // SweetAlert popup untuk update
-  Swal.fire({
-    title: 'Update EduBook',
-    width: '700px',
-    height: 'auto', 
-    html: `
-      <div style="display: flex; align-items: flex-start; gap: 5px; padding: 10px; padding-left: 0">
-        <div style="flex: 1;">
-          <input id="penulis" class="swal2-input w-75" placeholder="Penulis">
-          <input id="judul" class="swal2-input w-75" placeholder="Judul Buku">
-          <input id="harga" class="swal2-input w-75" placeholder="Rp">
-          <input id="image" class="swal2-file w-75" type="file" accept="image/*" onchange="previewImage(event)">
-        </div>
-        <div style="flex: 0 0 120px; text-align: center;">
-          <img id="imagePreview" style="width: 200px; height: auto; border: 1px solid #ddd; border-radius: 4px; object-fit: cover; display: none; margin-right: 10px" alt="Image Preview">
-        </div>
-      </div>
-    `,
-    focusConfirm: false,
-    showCancelButton: true,
-    preConfirm: () => {
-      // Ambil input dari pengguna
-      const penulis = document.getElementById('penulis').value;
-      const judul = document.getElementById('judul').value;
-      const harga = document.getElementById('harga').value;
-      const fileInput = document.getElementById('image');
-      const image = fileInput.files[0];
 
-      // Validasi input
-      if (!penulis || !judul || !harga || !image) {
-        Swal.showCancelButton('Harap isi semua kolom dan unggah gambar');
-        return false;
-      }
-
-      return new Promise((resolve) => {
-        console.log('data dari form', penulis, judul, harga, image);
-        const reader = new FileReader();
-        reader.onload = () => {
-          resolve({
-            penulis,
-            judul,
-            harga,
-            image: reader.result, // Convert ke Base64
-          });
-        };
-        reader.readAsDataURL(image);
-      });
-    },
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const { penulis, judul, harga, image } = result.value;
-
-      // Perbarui elemen di DOM
-      const card = document.getElementById(num);
-      if (card) {
-        card.querySelector('.card-title').textContent = penulis;
-        card.querySelector('.card-subtitle').textContent = judul;
-        card.querySelector('.card-price').textContent = `Rp ${harga}`;
-        card.querySelector('.card-image').src = image;
-      }
-
-      // Encode num untuk memastikan URL valid
-      const encodedNum = encodeURIComponent(num);
-
-      // Kirim data ke server
-      $.ajax({
-    url: `/admin/update/${encodedNum}`,  // Pastikan encodedNum adalah ID yang valid (angka)
-    type: "POST",
-    contentType: "application/json",
-    data: JSON.stringify({
-        penulis: penulis,  // Penulis buku yang diambil dari SweetAlert
-        judul: judul,      // Judul buku yang diambil dari SweetAlert
-        harga: harga,      // Harga buku yang diambil dari SweetAlert
-        filename: image    // Gambar buku (Base64)
-    }),
-    success: (response) => {
-        Swal.fire('Berhasil!', response.msg, 'success');
-        showCard(); // Perbarui daftar kartu setelah sukses
-    },
-    error: (xhr) => {
-        Swal.fire('Error!', xhr.responseJSON.msg || 'Gagal memperbarui buku.', 'error');
-    },
-});
-
-
-    }
-  });
-}
-
-
-
-
-
-
-// Helper function to preview the selected image
-function previewImage(event) {
-  const fileInput = event.target;
-  const preview = document.getElementById('imagePreview');
-  
-  if (fileInput.files && fileInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      preview.src = e.target.result;
-      preview.style.display = 'block'; // Show image preview
-    };
-    reader.readAsDataURL(fileInput.files[0]);
-  }
-}
 
 
     </script>
